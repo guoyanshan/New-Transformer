@@ -75,18 +75,26 @@ class Resnet18(nn.Module):
         f_pan_down_up_5 = self.blk4_3(f_pan_down_up_4)
         f_pan_5 = self.blk4_4(f_pan_4)
 
-        # f_pan_5 = torch.mean(f_pan_5, dim=1, keepdim=True)
-        # f_pan_5 = torch.mean(self.avg_pool(f_pan_5), dim=1, keepdim=True)
+        f_ms_up_5 = torch.mean(self.avg_pool(f_ms_up_5), dim=1, keepdim=True)
+        # f_pan_5_m = torch.mean(f_pan_5, dim=1, keepdim=True)
+        f_pan_5_a = torch.mean(self.avg_pool(f_pan_5), dim=1, keepdim=True)
+        f_pan_down_up_5 = torch.mean(self.avg_pool(f_pan_down_up_5), dim=1, keepdim=True)
+        f_ms_up_5 = Norm(f_ms_up_5)
+        f_ms_5 = Norm(f_ms_5)
+        f_pan_5_a = Norm(f_pan_5_a)
+        # f_pan_5_m = Norm(f_pan_5_m)
+        f_pan_down_up_5 = Norm(f_pan_down_up_5)
 
 
         Q = f_ms_up_5
         K = f_pan_down_up_5
-        Vp = f_pan_5
+        Vp = f_pan_5_a
         Vm = f_ms_5
         # # # print(Vp.shape)
         # _, _, h1, w1 = Vp.size()
         # Vm = F.upsample(f_ms_5, size=(h1, w1), mode='bilinear')
         # print(Vm.shape)
+        print(Q.shape, K.shape, Vp.shape, Vm.shape)
 
 
         b, c, h, w = Q.size(0), Q.size(1), Q.size(2), Q.size(3)
